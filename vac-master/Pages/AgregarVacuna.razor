@@ -1,0 +1,247 @@
+﻿@page "/AgregarVacuna"
+@using vac_master.Models;
+@using vac_master.Data;
+@using System.Linq;
+
+<h3>Agregar Vacuna</h3>
+<div class="row">
+    <div class="col-md-9">
+        <input @bind="@_cedula" class="form-control" placeholder="example: 402-3312915-8" maxlength="13" />
+    </div>
+    <div class="col-md-3">
+        <button @onclick="@Next" class="btn btn-success"><span class="oi oi-magnifying-glass" aria-hidden="true"></span>Siguiente</button>
+    </div>
+</div>
+<br />
+@if (SinRegistro)
+{
+    <div class="card p-4">
+        <h4>Agregar vacuna sin registro previo...</h4>
+        <div class="form-group">
+            <label><b>Nombre</b></label>
+            <br />
+            <input @bind="nombre" class="form-control" placeholder="Nombre" />
+        </div>
+        <div class="form-group">
+            <label><b>Apellido</b></label>
+            <br />
+            <input @bind="apellido" class="form-control" placeholder="Apellido" />
+        </div>
+        <div class="form-group">
+            <label><b>Telefono</b></label>
+            <br />
+            <input @bind="telefono" class="form-control" placeholder="Telefono" maxlength="15"/>
+        </div>
+        <div class="form-group">
+            <label><b>Cedula</b></label>
+            <br />
+            <input @bind="_cedula" class="form-control" placeholder="Cedula" maxlength="13"/>
+        </div>
+        <div class="form-group">
+            <label><b>Fecha nacimiento</b></label>
+            <br />
+            <input @bind="fechaNac" class="form-control" placeholder="Fecha de nacimiento" />
+        </div>
+        <div class="form-group">
+            <label><b>Vacuna a aplicar</b></label>
+            <EditForm Model="Drop">
+                <InputSelect id="Drop" @bind-Value="@DropId" class="form-control">
+                    @foreach (var i in Drop)
+                        {
+                        <option value="@i.Id"> @i.Nombre</option>
+                        }
+                </InputSelect>
+            </EditForm>
+            <br />
+            <label><b>Provincia</b></label>
+            <EditForm Model="Drop2">
+                <InputSelect id="Drop2" @bind-Value="@Drop2Id" class="form-control">
+                    @foreach (var i in Drop2)
+                        {
+                        <option value="@i.Id"> @i.Nombre</option>
+                        }
+                </InputSelect>
+            </EditForm>
+        </div>
+        <br />
+        <center>
+            <div class="form-group">
+                <button @onclick="AgregarVacunado" class="btn btn-success">Agregar vacuna</button>
+            </div>
+        </center>
+        <div class="alert alert-success d-flex align-items-center" role="alert">
+            <div>
+                <b>@message</b>
+            </div>
+        </div>
+    </div>
+}
+@if (ConRegistro)
+{
+    <div class="card p-4">
+        <h1>Bienvenido de nuevo <b> @persona.Nombre @persona.Apellido</b></h1> <br />
+        <h4>Ficha de vacunacion</h4>
+        <h6>Nombre:  @persona.Nombre @persona.Apellido</h6>
+        <h6>Cedula: @persona.Cedula</h6>
+        <h6>Telefono: @persona.Telefono</h6>
+        <h6>Fecha de nacimiento: @persona.FechaNac</h6>
+        <h6><b>Fecha de sus ultimas vacunas</b></h6>
+        @foreach (var v in Vacunacion)
+        {
+            <ul>
+                  <li>@v.Fecha</li>
+            </ul>
+        }
+        <div class="form-group">
+            <label><b>Vacuna a aplicar</b></label>
+            <EditForm Model="Drop">
+                <InputSelect id="Drop" @bind-Value="@DropId" class="form-control">
+                    @foreach (var i in Drop)
+                        {
+                        <option value="@i.Id"> @i.Nombre</option>
+                        }
+                </InputSelect>
+            </EditForm>
+            <br />
+            <label><b>Provincia</b></label>
+            <EditForm Model="Drop2">
+                <InputSelect id="Drop2" @bind-Value="@Drop2Id" class="form-control">
+                    @foreach (var i in Drop2)
+                        {
+                        <option value="@i.Id"> @i.Nombre</option>
+                        }
+                </InputSelect>
+            </EditForm>
+        </div>
+        <br />
+        <center>
+            <div class="form-group">
+                <button @onclick="AgregarDosis" class="btn btn-success">Agregar vacuna</button>
+            </div>
+        </center>
+        <div class="alert alert-success d-flex align-items-center" role="alert">
+            <div>
+                <b>@message</b>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    string nombre, apellido, telefono, message, fechaNac;
+    string _cedula;
+    bool SinRegistro = false;
+    bool ConRegistro = false;
+    string DropId = "1";
+    string Drop2Id = "1";
+
+    List<Vacunados> Vacunacion = new List<Vacunados>();
+    Dataprocess Data = new Dataprocess();
+    Persona persona = new Persona();
+    covid19Context db = new covid19Context();
+    List<DropdownItems> Drop = null;
+    List<DropdownItems> Drop2 = null;
+
+    public void Next()
+    {
+        //funcion que valida si la cedula esta en el sistema
+        var query = from Persona in db.Persona
+                    where Persona.Cedula == _cedula
+                    select Persona;
+        if (query.Count() == 0)
+        {
+            SinRegistro = true;
+        }
+        else if (query.Count() == 1)
+        {
+            Persona registro = query.First();
+            persona.Id = registro.Id;
+            persona.Nombre = registro.Nombre;
+            persona.Apellido = registro.Apellido;
+            persona.Cedula = registro.Cedula;
+            persona.Telefono = registro.Telefono;
+            persona.FechaNac = registro.FechaNac;
+
+            var vacunas = from Vacunados in db.Vacunados
+                          where Vacunados.IdPersona == persona.Id
+                          select Vacunados;
+            foreach (var i in vacunas)
+            {
+                Vacunacion.Add(i);
+            }
+
+            ConRegistro = true;
+
+        }
+
+        //procesamos el futuro dropdownlist
+        Drop = (from d in db.Vacuna
+                select new DropdownItems
+                {
+                    Id = d.Id,
+                    Nombre = d.NombreVacuna
+                }).ToList();
+
+        Drop2 = (from d in db.Provincias
+                 select new DropdownItems
+                 {
+                     Id = d.Id,
+                     Nombre = d.Provincia
+                 }).ToList();
+
+    }
+    //funcion que agrega usuarios sin un registro previo 
+    public void AgregarVacunado()
+    {
+        try
+        {
+            persona.Nombre = nombre;
+            persona.Apellido = apellido;
+            persona.Cedula = _cedula;
+            persona.Telefono = telefono;
+            persona.FechaNac = fechaNac;
+            Data.AddPersona(persona);
+
+            var query = from Persona in db.Persona
+                        where Persona.Cedula == _cedula
+                        select Persona;
+
+            Persona registro = query.First();
+
+            Vacunados obj = new Vacunados();
+            obj.IdPersona = registro.Id;
+            obj.IdVacuna = int.Parse(DropId);
+            obj.IdProvincia = int.Parse(Drop2Id);
+
+            Data.AddVacunado(obj);
+            message = "Registro agregado con exito!";
+        }
+        catch (Exception)
+        {
+
+            message = "No se puedo completar operacion";
+        }
+
+    }
+    //funcion que agrega una nueva dosis a un usuario ya vacunado
+    public void AgregarDosis()
+    {
+        try
+        {
+            Vacunados obj = new Vacunados();
+            obj.IdPersona = persona.Id;
+            obj.IdVacuna = int.Parse(DropId);
+            obj.IdProvincia = int.Parse(Drop2Id);
+
+            Data.AddVacunado(obj);
+            message = "Dosis agregada con exito!";
+        }
+        catch (Exception)
+        {
+
+            message = "Fallo al registrar la nueva dosis";
+        }
+
+    }
+
+}

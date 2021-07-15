@@ -1,0 +1,137 @@
+﻿@page "/Config"
+@using vac_master.Models;
+@using vac_master.Data;
+@using System.Linq;
+
+<h3>Configuracion de registros</h3>
+<div class="card text-white bg-dark mb-3 p-4">
+    <h4>Vacunas Management</h4>
+    <div class="form-group">
+        <label><b>Inserte el ID (solo para actualizar)</b></label>
+        <br />
+        <input @bind="idV" class="form-control" placeholder="Id vacuna" type="number"/>
+    </div>
+    <div class="form-group">
+        <label><b>Inserte el nombre de la Vacuna</b></label>
+        <br />
+        <input @bind="datoV" class="form-control" placeholder="Marca vacuna" />
+    </div>
+    <br />
+    <center>
+        <div class="form-group">
+            <button @onclick="AgregarVacuna" class="btn btn-success">Agregar vacuna</button>
+            <button @onclick="EditarVacuna" class="btn btn-primary">Editar vacuna</button>
+        </div>
+    </center>
+    <div class="alert alert-success d-flex align-items-center" role="alert">
+        <div>
+            <b>@message</b>
+        </div>
+    </div>
+</div>
+<br />
+<div class="card text-white bg-dark mb-3 p-4">
+    <h4>Provincias Management</h4>
+    <div class="form-group">
+        <label><b>Inserte el ID (solo para actualizar)</b></label>
+        <br />
+        <input @bind="idP" class="form-control" placeholder="Id Provincia" type="number"/>
+    </div>
+    <div class="form-group">
+        <label><b>Inserte el nombre de la Provincia</b></label>
+        <br />
+        <input @bind="datoP" class="form-control" placeholder="Nombre provincia" />
+    </div>
+    <br />
+    <center>
+        <div class="form-group">
+            <button @onclick="AgregarProvincia" class="btn btn-success">Agregar provincia</button>
+            <button @onclick="ActualizarProvincia" class="btn btn-primary">Editar provincia</button>
+        </div>
+    </center>
+    <div class="alert alert-success d-flex align-items-center" role="alert">
+        <div>
+            <b>@message2</b>
+        </div>
+    </div>
+</div>
+
+@code {
+    //variables y operadores de las consultas 
+    int idV;
+    string datoV;
+
+    int idP;
+    string datoP;
+
+    string message;
+    string message2;
+    Vacuna vac = new Vacuna();
+    Provincias pro = new Provincias();
+    Dataprocess data = new Dataprocess();
+
+    //funcion para agregar un tipo de vacuna 
+    public void AgregarVacuna()
+    {
+        try
+        {
+            vac.NombreVacuna = datoV;
+            data.AddVacuna(vac);
+            message = "Vacuna agregada!";
+        }
+        catch (Exception)
+        {
+
+            message = "No se pudo agregar la vacuna";
+        }
+
+    }
+    //funcion para modificar un tipo de vacuna 
+    public void EditarVacuna()
+    {
+        try
+        {
+            vac.Id = idV;
+            vac.NombreVacuna = datoV;
+            data.UpdateVacuna(vac);
+            message = "Vacuna Actualizada!";
+        }
+        catch (Exception)
+        {
+
+            message = "No se pudo editar la vacuna";
+        }
+
+    }
+    //funcion para agregar una provincia 
+    public void AgregarProvincia()
+    {
+        try
+        {
+            pro.Provincia = datoP;
+            data.AddProvincia(pro);
+            message2 = "Provincia Agregada!";
+        }
+        catch (Exception)
+        {
+
+            message2 = "no se pudo agregar la provincia";
+        }
+    }
+    //funcion para modificar una provincia 
+    public void ActualizarProvincia()
+    {
+        try
+        {
+            pro.Id = idP;
+            pro.Provincia = datoP;
+            data.UpdateProvincia(pro);
+            message2 = "Provincia Actualizada!";
+        }
+        catch (Exception)
+        {
+
+            message2 = "No se pudo actualizar la provincia";
+        }
+    }
+}
