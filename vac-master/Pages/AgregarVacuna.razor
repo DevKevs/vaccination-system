@@ -3,18 +3,22 @@
 @using vac_master.Data;
 @using System.Linq;
 
-<h3>Agregar Vacuna</h3>
-<div class="row">
-    <div class="col-md-9">
-        <input @bind="@_cedula" class="form-control" placeholder="example: 402-3312915-8" maxlength="13" />
+
+<div class="container">
+    <h4>Agregar Vacuna</h4>
+    <h5>Ingrese su cédula para continuar</h5>
+    
+    <div class="row">
+        <div class="col-md-9">
+            <input @bind="@_cedula" class="form-control" placeholder="example: 402-3312915-8" maxlength="13" />
+        </div>
+        <div class="col-md-3">
+            <button @onclick="@Next" class="btn btn-success"><span class="oi oi-magnifying-glass" aria-hidden="true"></span>Siguiente</button>
+        </div>
     </div>
-    <div class="col-md-3">
-        <button @onclick="@Next" class="btn btn-success"><span class="oi oi-magnifying-glass" aria-hidden="true"></span>Siguiente</button>
-    </div>
-</div>
-<br />
-@if (SinRegistro)
-{
+    <br />
+    @if (SinRegistro)
+    {
     <div class="card p-4">
         <h4>Agregar vacuna sin registro previo...</h4>
         <div class="form-group">
@@ -76,56 +80,75 @@
         </div>
     </div>
 }
-@if (ConRegistro)
-{
-    <div class="card p-4">
-        <h1>Bienvenido de nuevo <b> @persona.Nombre @persona.Apellido</b></h1> <br />
-        <h4>Ficha de vacunacion</h4>
-        <h6>Nombre:  @persona.Nombre @persona.Apellido</h6>
-        <h6>Cedula: @persona.Cedula</h6>
-        <h6>Telefono: @persona.Telefono</h6>
-        <h6>Fecha de nacimiento: @persona.FechaNac</h6>
-        <h6><b>Fecha de sus ultimas vacunas</b></h6>
-        @foreach (var v in Vacunacion)
-        {
-            <ul>
-                  <li>@v.Fecha</li>
-            </ul>
-        }
-        <div class="form-group">
-            <label><b>Vacuna a aplicar</b></label>
-            <EditForm Model="Drop">
-                <InputSelect id="Drop" @bind-Value="@DropId" class="form-control">
-                    @foreach (var i in Drop)
-                        {
-                        <option value="@i.Id"> @i.Nombre</option>
-                        }
-                </InputSelect>
-            </EditForm>
-            <br />
-            <label><b>Provincia</b></label>
-            <EditForm Model="Drop2">
-                <InputSelect id="Drop2" @bind-Value="@Drop2Id" class="form-control">
-                    @foreach (var i in Drop2)
-                        {
-                        <option value="@i.Id"> @i.Nombre</option>
-                        }
-                </InputSelect>
-            </EditForm>
-        </div>
-        <br />
-        <center>
-            <div class="form-group">
-                <button @onclick="AgregarDosis" class="btn btn-success">Agregar vacuna</button>
+ 
+    @if (ConRegistro)
+    {
+       
+        <div class="card p-4">
+            <h1>Bienvenido de nuevo <b> @persona.Nombre @persona.Apellido</b></h1> <br />
+            <h4>Ficha de vacunacion</h4>
+            <h6>Nombre:  @persona.Nombre @persona.Apellido</h6>
+            <h6>Cedula: @persona.Cedula</h6>
+            <h6>Telefono: @persona.Telefono</h6>
+            <h6>Fecha de nacimiento: @persona.FechaNac</h6>
+            <h6><b>Fecha de sus ultimas vacunas</b></h6>
+            <div class="row">
+                    <div class="col-sm-6">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Fecha de vacuna</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var v in Vacunacion)
+                                {
+                                    <tr>
+                                        <td>@v.Id</td>
+                                        <td>@v.Fecha</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-        </center>
+
+        <div class="form-group">
+                <label><b>Vacuna a aplicar</b></label>
+                <EditForm Model="Drop">
+                    <InputSelect id="Drop" @bind-Value="@DropId" class="form-control">
+                        @foreach (var i in Drop)
+                            {
+                                <option value="@i.Id"> @i.Nombre</option>
+                            }
+                    </InputSelect>
+                </EditForm>
+                <br />
+                <label><b>Provincia</b></label>
+                <EditForm Model="Drop2">
+                    <InputSelect id="Drop2" @bind-Value="@Drop2Id" class="form-control">
+                        @foreach (var i in Drop2)
+                            {
+                            <option value="@i.Id"> @i.Nombre</option>
+                            }
+                    </InputSelect>
+                </EditForm>
+            </div>
+            <br />
+            <div styl="text-align: center;">
+                <div class="form-group">
+                    <button @onclick="AgregarDosis" class="btn btn-success">Agregar vacuna</button>
+                </div>
+            </div>
         <div class="alert alert-success d-flex align-items-center" role="alert">
             <div>
                 <b>@message</b>
             </div>
         </div>
-    </div>
-}
+    }
+ </div>
 
 @code {
     string nombre, apellido, telefono, message, fechaNac;
@@ -154,6 +177,7 @@
         }
         else if (query.Count() == 1)
         {
+            SinRegistro = false;
             Persona registro = query.First();
             persona.Id = registro.Id;
             persona.Nombre = registro.Nombre;

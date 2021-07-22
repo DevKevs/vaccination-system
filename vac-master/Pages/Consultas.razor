@@ -1,0 +1,92 @@
+﻿@page "/Consultas"
+@using vac_master.Models
+@using System.Text.RegularExpressions
+
+
+<div class="container">
+    <h4>Consultar vacunados </h4>
+    <h5>Busque personas vacunadas por nombre o apellido</h5>
+    
+    <div class="row">
+        <div class="col-md-9">
+            <input @bind="@_registro" class="form-control" placeholder="example: Juan"  />
+        </div>
+        <div class="col-md-3">
+            <button @onclick="@Next" class="btn btn-success"><span class="oi oi-magnifying-glass" aria-hidden="true"></span>Siguiente</button>
+        </div>
+    </div>
+    <br>
+    <table class="table table-dark table-borderless">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Cedula</th>
+            <th>Cantidad de dosis</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var p in _personas)
+        {
+            <tr>
+                <td>@p.Id</td>
+                <td>@p.Nombre</td>
+                <td>@p.Apellido</td>
+                <td>@p.Cedula</td>
+                <td>
+                    @foreach (var au in _auxiliar)
+                    {
+                        @if (p.Id == au.DataId)
+                        {
+                            @au.DataCount
+                        }
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+@code {
+
+    public class AuxData
+    {
+        public int DataId{ get; set; }
+        public int DataCount{ get; set; }
+    }
+    
+    string _registro;
+    covid19Context _db = new();
+    List<Persona> _personas = new();
+    List<AuxData> _auxiliar = new();
+    
+    public void Next()
+    {
+        _personas.Clear();
+        var query = from p in _db.Persona
+            where p.Nombre == _registro || p.Apellido == _registro 
+            select p;
+        
+        foreach (var per in query)
+        {
+            _personas.Add(per);
+        }
+
+        var auxQuery = from v in _db.Vacunados
+            group v by v.IdPersona
+            into results
+            select new
+            {
+                AuxId = results.Key,
+                result = results.Count()
+            };
+        
+        _auxiliar.Clear();
+        foreach (var a in auxQuery)
+        {
+            _auxiliar.Add(new() {DataId = a.AuxId, DataCount = a.result});
+        }
+    }
+}

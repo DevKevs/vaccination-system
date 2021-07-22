@@ -1,0 +1,151 @@
+﻿@page "/ElminarDosis"
+@using vac_master.Models;
+@using vac_master.Data;
+@using System.Linq;
+@using Microsoft.AspNetCore.Server.Kestrel.Core
+
+
+<div class="container">
+    <h4>Buscar paciente...</h4>
+    <h5>Ingrese su cédula para continuar</h5>
+    
+    <div class="row">
+        <div class="col-md-9">
+            <input @bind="@_cedula" class="form-control" placeholder="example: 402-3312915-8" maxlength="13"/>
+        </div>
+        <div class="col-md-3">
+            <button @onclick="@Next" class="btn btn-success"><span class="oi oi-magnifying-glass" aria-hidden="true"></span>Siguiente</button>
+        </div>
+    </div>
+    <br>
+
+    <div style="text-align: center;">
+        @if (_sinRegistro)
+        {
+            <h56><code>Ups... No encontramos tu registro. </code></h56>
+            <br>
+            <h6>Si deseas agregar un registro <a href="AgregarVacuna"> Click aquí </a> </h6>
+            <br>
+            <img src="Profiling-bro.svg" width="45%">
+        }
+    </div>
+
+
+    @if (_conRegistro)
+    {
+        <div class="card p-4">
+            <h5>Bienvenido de nuevo <b> @persona.Nombre @persona.Apellido</b></h5> <br/>
+            <h6><b>Ficha de vacunacion</b></h6>
+            <p>Nombre: @persona.Nombre @persona.Apellido</p>
+            <p>Cedula: @persona.Cedula</p>
+            <p>Telefono: @persona.Telefono</p>
+            <p>Fecha de nacimiento: @persona.FechaNac</p>
+
+            <h6>
+                <b>Fecha de sus dosis</b>
+            </h6>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <table class="table table-dark table-borderless">
+                        <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Fecha de vacuna</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var v in Dosis)
+                        {
+                            <tr>
+                                <td>@v.Id</td>
+                                <td>@v.Fecha</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-5">
+                    <img src="DNA-bro.svg" alt="vacuna xd" width="95%">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Especificame el id de la dosis que quieres eliminar</h6>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <input @bind="@_idDosis" class="form-control" placeholder="Id" type="int"/></div>
+
+                <div class="col-md-3">
+                    <button @onclick="@BorrarDosis" class="btn btn-danger"><span class="oi oi-x" aria-hidden="true"></span> Elminar</button>
+                </div>
+
+            </div>
+            <code>@_message</code>
+        </div>
+
+    }
+</div>
+
+
+@code {
+    string _cedula;
+    bool _sinRegistro;
+    bool _conRegistro;
+    int _idDosis;
+    string _message;
+    covid19Context dtb = new();
+    Persona persona = new();
+    Dataprocess proc = new();
+    readonly List<Vacunados> Dosis = new();
+
+
+    public void Next()
+    {
+        var query = from persona in dtb.Persona
+            where persona.Cedula == _cedula
+            select persona;
+
+        if (query.Count() == 0)
+        {
+            _sinRegistro = true;
+        }
+        else if (query.Count() == 1)
+        {
+            _sinRegistro = false;
+            Persona registro = query.First();
+            persona.Id = registro.Id;
+            persona.Nombre = registro.Nombre;
+            persona.Apellido = registro.Apellido;
+            persona.Cedula = registro.Cedula;
+            persona.Telefono = registro.Telefono;
+            persona.FechaNac = registro.FechaNac;
+
+            var vacunas = dtb.Vacunados.Where(vacunados => vacunados.IdPersona == persona.Id);
+            foreach (var i in vacunas)
+            {
+                Dosis.Add(i);
+            }
+            _conRegistro = true;
+        }
+    }
+
+    public void BorrarDosis()
+    {
+        try
+        {
+            _message = "";
+            var registro = dtb.Vacunados.Where(vacunados => vacunados.Id == _idDosis);
+            Vacunados encontrado = registro.First();
+            proc.RemoveDosis(encontrado);
+            _message = "Registro elminado con exito";
+        }
+        catch (Exception )
+        {
+            _message = "No se pudo eliminar el registro";
+        }
+    }
+}

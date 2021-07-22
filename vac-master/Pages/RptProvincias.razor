@@ -1,0 +1,118 @@
+﻿@page "/Provincias"
+@using vac_master.Data
+@using vac_master.Models
+
+
+<div class="container">
+    <h4>Consultar vacunados por provincia</h4>
+    <label><b>Seleccione la provincia a consultar</b></label>
+    <div class="row">
+        <div class="col-md-9">
+            <EditForm Model="Drop">
+                <InputSelect id="Drop" @bind-Value="@DropId" class="form-control">
+                    @foreach (var i in Drop)
+                    {
+                        <option value="@i.Id"> @i.Nombre</option>
+                    }
+                </InputSelect>
+            </EditForm>
+            <br/>
+        </div>
+        <div class="col-md-3">
+            <button @onclick="@Next" class="btn btn-success"><span class="oi oi-magnifying-glass" aria-hidden="true"></span>Siguiente</button>
+        </div>
+    </div>
+    
+    <table class="table table-dark table-borderless">
+        <thead>
+        <tr>
+            <th>Cedula</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Telefono</th>
+            <th>Fecha de vacuna</th>
+            <th>Vacuna recibida</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var prov in _provinciasVac )
+        {
+            <tr>
+                @foreach (var per in _personas)
+                {
+                    @if (prov.IdPersona == per.Id)
+                    {
+                        <td>@per.Cedula</td>
+                        <td>@per.Nombre</td>
+                        <td>@per.Apellido</td>
+                        <td>@per.Telefono</td>
+                    }
+                }
+                <td>@prov.Fecha</td>
+                <td>
+                    @foreach (var vac in _vacunas)
+                    {
+                        if (prov.IdVacuna == vac.Id)
+                        {
+                            @vac.NombreVacuna
+                        }
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+     <h6><code>@_message</code></h6>
+   
+        
+</div>
+
+
+@code {
+    string DropId = "1";
+    string _message = "";
+
+    covid19Context db = new();
+    List<DropdownItems> Drop = new();
+    List<Vacunados> _provinciasVac = new();
+    List<Persona> _personas = new();
+    List<Vacuna> _vacunas = new();
+    
+    protected override void OnInitialized()
+    {
+        Drop = (from d in db.Provincias
+            select new DropdownItems
+            {
+                Id = d.Id,
+                Nombre = d.Provincia
+            }).ToList();
+    }
+
+    public void Next()
+    {
+        _message = "";
+        _provinciasVac.Clear();
+        _personas.Clear();
+        _vacunas.Clear();
+        try
+        {
+            var query = from p in db.Vacunados
+                where p.IdProvincia == int.Parse(DropId)
+                select p;
+            foreach (var pro in query)
+            {
+                _provinciasVac.Add(pro);
+            }
+            _personas = db.Persona.ToList();
+            _vacunas = db.Vacuna.ToList();
+        }
+        catch (Exception e)
+        {
+            throw e;
+        }
+        if (_provinciasVac.Count() == 0)
+        {
+            _message = "No existen vacunas que mostrar en esta provincia";
+        }
+    }
+}

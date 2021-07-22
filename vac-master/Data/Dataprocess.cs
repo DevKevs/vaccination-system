@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Converters;
 using vac_master.Models;
 
 namespace vac_master.Data
@@ -54,6 +55,12 @@ namespace vac_master.Data
         public void AddVacunado(Vacunados obj)
         {
             db.Vacunados.Add(obj);
+            db.SaveChanges();
+        }
+
+        public void RemoveDosis(Vacunados obj)
+        {
+            db.Vacunados.Remove(obj);
             db.SaveChanges();
         }
     }
