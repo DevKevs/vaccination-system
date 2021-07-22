@@ -72,11 +72,11 @@
     string DropId = "1";
     string _message = "";
 
-    covid19Context db = new();
-    List<DropdownItems> Drop = new();
-    List<Vacunados> _provinciasVac = new();
-    List<Persona> _personas = new();
-    List<Vacuna> _vacunas = new();
+    covid19Context db = new covid19Context();
+    List<DropdownItems> Drop = new List<DropdownItems>();
+    List<Vacunados> _provinciasVac = new List<Vacunados>();
+    List<Persona> _personas = new List<Persona>();
+    List<Vacuna> _vacunas = new List<Vacuna>();
     
     protected override void OnInitialized()
     {

@@ -26,7 +26,7 @@
             <br>
             <h6>Si deseas agregar un registro <a href="AgregarVacuna"> Click aquí </a> </h6>
             <br>
-            <img src="Profiling-bro.svg" width="45%">
+            <img src="Profiling-bro.svg" width="450">
         }
     </div>
 
@@ -66,7 +66,7 @@
                     </table>
                 </div>
                 <div class="col-md-5">
-                    <img src="DNA-bro.svg" alt="vacuna xd" width="95%">
+                    <img src="DNA-bro.svg" alt="vacuna xd" width="400">
                 </div>
             </div>
 
@@ -77,7 +77,7 @@
             </div>
             <div class="row">
                 <div class="col-md-6">
-                    <input @bind="@_idDosis" class="form-control" placeholder="Id" type="int"/></div>
+                    <input @bind="@_idDosis" class="form-control" placeholder="Id" type="number"/></div>
 
                 <div class="col-md-3">
                     <button @onclick="@BorrarDosis" class="btn btn-danger"><span class="oi oi-x" aria-hidden="true"></span> Elminar</button>
@@ -97,10 +97,10 @@
     bool _conRegistro;
     int _idDosis;
     string _message;
-    covid19Context dtb = new();
-    Persona persona = new();
-    Dataprocess proc = new();
-    readonly List<Vacunados> Dosis = new();
+    covid19Context dtb = new covid19Context();
+    Persona persona = new Persona();
+    Dataprocess proc = new Dataprocess();
+    readonly List<Vacunados> Dosis = new List<Vacunados>();
 
 
     public void Next()

@@ -58,9 +58,9 @@
     }
     
     string _registro;
-    covid19Context _db = new();
-    List<Persona> _personas = new();
-    List<AuxData> _auxiliar = new();
+    covid19Context _db = new covid19Context();
+    List<Persona> _personas = new List<Persona>();
+    List<AuxData> _auxiliar = new List<AuxData>();
     
     public void Next()
     {
@@ -86,7 +86,7 @@
         _auxiliar.Clear();
         foreach (var a in auxQuery)
         {
-            _auxiliar.Add(new() {DataId = a.AuxId, DataCount = a.result});
+            _auxiliar.Add(new AuxData() {DataId = a.AuxId, DataCount = a.result});
         }
     }
 }
