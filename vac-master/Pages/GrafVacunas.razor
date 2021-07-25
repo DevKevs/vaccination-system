@@ -1,0 +1,111 @@
+﻿@page "/GrafVacunas"
+@using ChartJs.Blazor.PieChart;
+@using vac_master.Models;
+@using vac_master.Data;
+@using System.Linq;
+<h3>Grafica de Vacunas</h3>
+
+<table class="table table-dark table-bordered">
+    <thead>
+        <tr>
+            <th>Id </th>
+            <th>Marca de Vacuna</th>
+            <th>Cantidad</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var i in CantVacunas)
+        {
+            <tr>
+                <td>@i.id</td>
+                @foreach (var v in Marcas)
+                {
+                    @if (i.id == v.Id)
+                    {
+                        <td>@v.NombreVacuna</td>
+                    }
+                }
+                <td>@i.cantidad</td>
+            </tr>
+        }
+    </tbody>
+</table>
+            
+
+<Chart Config="_config"></Chart>
+
+
+
+
+@code {
+    public class Auxdata
+    {
+        public int id { get; set; }
+        public int cantidad { get; set; }
+    }
+    private PieConfig _config;
+    covid19Context db = new covid19Context();
+    List<int> GrfCount = new List<int>();
+    List<string> data = new List<string>();
+    List<Auxdata> CantVacunas = new List<Auxdata>();
+    List<Vacuna> Marcas = new List<Vacuna>();
+
+    protected override void OnInitialized()
+    {
+        Processdata();
+        _config = new PieConfig
+        {
+            Options = new PieOptions
+            {
+                Responsive = true,
+                Title = new OptionsTitle
+                {
+                    Display = true,
+                    Text = "Vacunados por marca de vacunas"
+                }
+            }
+        };
+
+        foreach (string color in data)
+        {
+            _config.Data.Labels.Add(color);
+        }
+
+        PieDataset<int> dataset = new PieDataset<int>(GrfCount)
+        {
+            BackgroundColor = new[]
+            {
+            ColorUtil.ColorHexString(255, 99, 132), // Slice 1 aka "Red"
+            ColorUtil.ColorHexString(255, 205, 86), // Slice 2 aka "Yellow"
+            ColorUtil.ColorHexString(75, 192, 192), // Slice 3 aka "Green"
+            ColorUtil.ColorHexString(54, 162, 235), // Slice 4 aka "Blue"
+        }
+        };
+
+        _config.Data.Datasets.Add(dataset);
+    }
+
+    public void Processdata()
+    {
+        Marcas = db.Vacuna.ToList();
+        var query = from v in db.Vacunados
+                    group v by v.IdVacuna into totals
+                    select new
+                    {
+                        _key = totals.Key,
+                        totales = totals.Count()
+                    };
+        foreach (var i in query)
+        {
+            CantVacunas.Add(new Auxdata { id = i._key, cantidad = i.totales });
+            foreach (var v in Marcas)
+            {
+                if (v.Id == i._key)
+                {
+                    data.Add($"{v.NombreVacuna}");
+                }
+            }
+            GrfCount.Add(i.totales);
+        }
+    }
+}

@@ -3,58 +3,66 @@
 @using vac_master.Data;
 @using System.Linq;
 
-<h3>Configuracion de registros</h3>
-<div class="card text-white bg-dark mb-3 p-4">
-    <h4>Vacunas Management</h4>
-    <div class="form-group">
-        <label><b>Inserte el ID (solo para actualizar)</b></label>
-        <br />
-        <input @bind="idV" class="form-control" placeholder="Id vacuna" type="number"/>
-    </div>
-    <div class="form-group">
-        <label><b>Inserte el nombre de la Vacuna</b></label>
-        <br />
-        <input @bind="datoV" class="form-control" placeholder="Marca vacuna" />
-    </div>
-    <br />
-    <center>
-        <div class="form-group">
-            <button @onclick="AgregarVacuna" class="btn btn-success">Agregar vacuna</button>
-            <button @onclick="EditarVacuna" class="btn btn-primary">Editar vacuna</button>
-        </div>
-    </center>
-    <div class="alert alert-success d-flex align-items-center" role="alert">
-        <div>
-            <b>@message</b>
-        </div>
-    </div>
-</div>
 <br />
-<div class="card text-white bg-dark mb-3 p-4">
-    <h4>Provincias Management</h4>
-    <div class="form-group">
-        <label><b>Inserte el ID (solo para actualizar)</b></label>
-        <br />
-        <input @bind="idP" class="form-control" placeholder="Id Provincia" type="number"/>
-    </div>
-    <div class="form-group">
-        <label><b>Inserte el nombre de la Provincia</b></label>
-        <br />
-        <input @bind="datoP" class="form-control" placeholder="Nombre provincia" />
-    </div>
-    <br />
-    <center>
-        <div class="form-group">
-            <button @onclick="AgregarProvincia" class="btn btn-success">Agregar provincia</button>
-            <button @onclick="ActualizarProvincia" class="btn btn-primary">Editar provincia</button>
+<h3>Configuracion de registros</h3>
+<br /><br />
+<div class="row">
+    <div class="col-lg-6">
+        <div class="card text-white bg-dark mb-3 p-4">
+            <h4>Vacunas Management</h4>
+            <div class="form-group">
+                <label><b>Inserte el ID (solo para actualizar)</b></label>
+                <br />
+                <input @bind="idV" class="form-control" placeholder="Id vacuna" type="number" />
+            </div>
+            <div class="form-group">
+                <label><b>Inserte el nombre de la Vacuna</b></label>
+                <br />
+                <input @bind="datoV" class="form-control" placeholder="Marca vacuna" />
+            </div>
+            <br />
+            <center>
+                <div class="form-group">
+                    <button @onclick="AgregarVacuna" class="btn btn-success">Agregar vacuna</button>
+                    <button @onclick="EditarVacuna" class="btn btn-primary">Editar vacuna</button>
+                </div>
+            </center>
+            <div class="alert alert-success d-flex align-items-center" role="alert">
+                <div>
+                    <b>@message</b>
+                </div>
+            </div>
         </div>
-    </center>
-    <div class="alert alert-success d-flex align-items-center" role="alert">
-        <div>
-            <b>@message2</b>
+    </div>
+    <div class="col-lg-6">
+        <div class="card text-white bg-dark mb-3 p-4">
+            <h4>Provincias Management</h4>
+            <div class="form-group">
+                <label><b>Inserte el ID (solo para actualizar)</b></label>
+                <br />
+                <input @bind="idP" class="form-control" placeholder="Id Provincia" type="number" />
+            </div>
+            <div class="form-group">
+                <label><b>Inserte el nombre de la Provincia</b></label>
+                <br />
+                <input @bind="datoP" class="form-control" placeholder="Nombre provincia" />
+            </div>
+            <br />
+            <center>
+                <div class="form-group">
+                    <button @onclick="AgregarProvincia" class="btn btn-success">Agregar provincia</button>
+                    <button @onclick="ActualizarProvincia" class="btn btn-primary">Editar provincia</button>
+                </div>
+            </center>
+            <div class="alert alert-success d-flex align-items-center" role="alert">
+                <div>
+                    <b>@message2</b>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
 
 @code {
     //variables y operadores de las consultas 

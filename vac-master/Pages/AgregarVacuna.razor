@@ -17,6 +17,12 @@
         </div>
     </div>
     <br />
+    @if (preview)
+    {
+        <center>
+            <img src="/Medical care-bro.svg" width="500" />
+        </center>
+    }
     @if (SinRegistro)
     {
     <div class="card p-4">
@@ -44,7 +50,7 @@
         <div class="form-group">
             <label><b>Fecha nacimiento</b></label>
             <br />
-            <input @bind="fechaNac" class="form-control" placeholder="Fecha de nacimiento" />
+            <input @bind="fechaNac" class="form-control" placeholder="DD/MM/YYYY" />
         </div>
         <div class="form-group">
             <label><b>Vacuna a aplicar</b></label>
@@ -155,6 +161,7 @@
     string _cedula;
     bool SinRegistro = false;
     bool ConRegistro = false;
+    bool preview = true;
     string DropId = "1";
     string Drop2Id = "1";
 
@@ -174,10 +181,12 @@
         if (query.Count() == 0)
         {
             SinRegistro = true;
+            preview = false;
         }
         else if (query.Count() == 1)
         {
             SinRegistro = false;
+            preview = false;
             Persona registro = query.First();
             persona.Id = registro.Id;
             persona.Nombre = registro.Nombre;

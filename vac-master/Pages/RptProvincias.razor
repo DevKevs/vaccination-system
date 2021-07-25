@@ -19,7 +19,7 @@
             <br/>
         </div>
         <div class="col-md-3">
-            <button @onclick="@Next" class="btn btn-success"><span class="oi oi-magnifying-glass" aria-hidden="true"></span>Siguiente</button>
+            <button @onclick="@Next" class="btn btn-success"><span class="oi oi-magnifying-glass" aria-hidden="true"></span>Buscar</button>
         </div>
     </div>
     
@@ -63,7 +63,12 @@
         </tbody>
     </table>
      <h6><code>@_message</code></h6>
-   
+   @if (preview)
+    {
+        <center>
+            <img src="/Building-bro.svg" width="450" />
+        </center>
+    }
         
 </div>
 
@@ -71,7 +76,7 @@
 @code {
     string DropId = "1";
     string _message = "";
-
+    bool preview = true;
     covid19Context db = new covid19Context();
     List<DropdownItems> Drop = new List<DropdownItems>();
     List<Vacunados> _provinciasVac = new List<Vacunados>();
@@ -90,6 +95,7 @@
 
     public void Next()
     {
+        preview = false;
         _message = "";
         _provinciasVac.Clear();
         _personas.Clear();

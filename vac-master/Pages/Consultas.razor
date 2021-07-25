@@ -12,7 +12,7 @@
             <input @bind="@_registro" class="form-control" placeholder="example: Juan"  />
         </div>
         <div class="col-md-3">
-            <button @onclick="@Next" class="btn btn-success"><span class="oi oi-magnifying-glass" aria-hidden="true"></span>Siguiente</button>
+            <button @onclick="@Next" class="btn btn-success"><span class="oi oi-magnifying-glass" aria-hidden="true"></span>Buscar</button>
         </div>
     </div>
     <br>
@@ -47,6 +47,12 @@
         }
         </tbody>
     </table>
+   @if (preview)
+    {
+        <center>
+            <img src="/Doctor-bro.svg" width="400" />
+        </center>
+    }
 </div>
 
 @code {
@@ -56,33 +62,35 @@
         public int DataId{ get; set; }
         public int DataCount{ get; set; }
     }
-    
+
     string _registro;
+    bool preview = true;
     covid19Context _db = new covid19Context();
     List<Persona> _personas = new List<Persona>();
     List<AuxData> _auxiliar = new List<AuxData>();
-    
+
     public void Next()
     {
+        preview = false;
         _personas.Clear();
         var query = from p in _db.Persona
-            where p.Nombre == _registro || p.Apellido == _registro 
-            select p;
-        
+                    where p.Nombre == _registro || p.Apellido == _registro
+                    select p;
+
         foreach (var per in query)
         {
             _personas.Add(per);
         }
 
         var auxQuery = from v in _db.Vacunados
-            group v by v.IdPersona
+                       group v by v.IdPersona
             into results
-            select new
-            {
-                AuxId = results.Key,
-                result = results.Count()
-            };
-        
+                       select new
+                       {
+                           AuxId = results.Key,
+                           result = results.Count()
+                       };
+
         _auxiliar.Clear();
         foreach (var a in auxQuery)
         {

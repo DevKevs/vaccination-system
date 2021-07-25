@@ -6,7 +6,7 @@
 
 
 <div class="container">
-    <h4>Buscar paciente...</h4>
+    <h4>Eliminar una dosis</h4>
     <h5>Ingrese su cédula para continuar</h5>
     
     <div class="row">
@@ -19,6 +19,12 @@
     </div>
     <br>
 
+    @if (preview)
+    {
+       <center>
+           <img src="/Health professional team-bro.svg" width="500"/>
+       </center>
+    }
     <div style="text-align: center;">
         @if (_sinRegistro)
         {
@@ -95,6 +101,7 @@
     string _cedula;
     bool _sinRegistro;
     bool _conRegistro;
+    bool preview = true;
     int _idDosis;
     string _message;
     covid19Context dtb = new covid19Context();
@@ -106,16 +113,18 @@
     public void Next()
     {
         var query = from persona in dtb.Persona
-            where persona.Cedula == _cedula
-            select persona;
+                    where persona.Cedula == _cedula
+                    select persona;
 
         if (query.Count() == 0)
         {
             _sinRegistro = true;
+            preview = false;
         }
         else if (query.Count() == 1)
         {
             _sinRegistro = false;
+            preview = false;
             Persona registro = query.First();
             persona.Id = registro.Id;
             persona.Nombre = registro.Nombre;

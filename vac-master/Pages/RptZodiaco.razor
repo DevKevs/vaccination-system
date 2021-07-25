@@ -1,0 +1,145 @@
+﻿@page "/RptZodiaco"
+@using vac_master.Models;
+@using vac_master.Data;
+@using System.Linq;
+
+<h3><b>Reporte de Signos del Zodiaco</b></h3>
+<br />
+<table class="table table-dark table-bordered">
+    <thead>
+        <tr>
+            <th>Signo</th>
+            <th>Cantidad</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>@signo[0]</td>
+            <td>@capri</td>
+        </tr>
+        <tr>
+            <td>@signo[1]</td>
+            <td>@acua</td>
+        </tr>
+        <tr>
+            <td>@signo[2]</td>
+            <td>@pis</td>
+        </tr>
+        <tr>
+            <td>@signo[3]</td>
+            <td>@ari</td>
+        </tr>
+        <tr>
+            <td>@signo[4]</td>
+            <td>@tau</td>
+        </tr>
+        <tr>
+            <td>@signo[5]</td>
+            <td>@gem</td>
+        </tr>
+        <tr>
+            <td>@signo[6]</td>
+            <td>@can</td>
+        </tr>
+        <tr>
+            <td>@signo[7]</td>
+            <td>@leo</td>
+        </tr>
+        <tr>
+            <td>@signo[8]</td>
+            <td>@vir</td>
+        </tr>
+        <tr>
+            <td>@signo[9]</td>
+            <td>@lib</td>
+        </tr>
+        <tr>
+            <td>@signo[10]</td>
+            <td>@esc</td>
+        </tr>
+        <tr>
+            <td>@signo[11]</td>
+            <td>@sag</td>
+        </tr>
+    </tbody>
+</table>
+
+@code {
+    covid19Context db = new covid19Context();
+    List<Persona> personas = new List<Persona>();
+    DateTime fecha = new DateTime();
+    string zodiaco;
+    int capri, acua, pis, ari, tau, gem, can, leo, vir, lib, esc, sag;
+    List<string> signo = new List<string>() { "Capricornio", "Acuario", "Piscis", "Aries", "Tauro", "Geminis", "Cancer", "Leo", "Virgo", "Libra", "Escorpio", "Sagitario" };
+    List<int> fechas = new List<int>() { 20, 19, 20, 20, 21, 21, 22, 22, 22, 22, 22, 21 };
+
+    protected override void OnInitialized()
+    {
+        personas = db.Persona.ToList();
+
+        foreach (var i in personas)
+        {
+            fecha = Convert.ToDateTime(i.FechaNac);
+
+            int dia = fecha.Day;
+            int mes = fecha.Month;
+            int year = fecha.Year;
+
+            mes = mes - 1;
+            if (dia > fechas[mes])
+            {
+                mes = mes + 1;
+            }
+            zodiaco = signo[mes];
+
+            if (zodiaco == "Capricornio")
+            {
+                capri++;
+            }
+            else if (zodiaco == "Acuario")
+            {
+                acua++;
+            }
+            else if (zodiaco == "Piscis")
+            {
+                pis++;
+            }
+            else if (zodiaco == "Aries")
+            {
+                ari++;
+            }
+            else if (zodiaco == "Tauro")
+            {
+                tau++;
+            }
+            else if (zodiaco == "Geminis")
+            {
+                gem++;
+            }
+            else if (zodiaco == "Cancer")
+            {
+                can++;
+            }
+            else if (zodiaco == "Leo")
+            {
+                leo++;
+            }
+            else if (zodiaco == "Virgo")
+            {
+                vir++;
+            }
+            else if (zodiaco == "Libra")
+            {
+                lib++;
+            }
+            else if (zodiaco == "Escorpio")
+            {
+                esc++;
+            }
+            else if (zodiaco == "Sagitario")
+            {
+                sag++;
+            }
+        }
+    }
+}
